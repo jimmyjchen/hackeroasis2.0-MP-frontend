@@ -56,3 +56,8 @@
 
 
 </view>
+
+<view>
+  <text>{{userInfo.nickName}}, {{userInfo.country}}</text>
+</view>
+<image src="{{avatarUrl}}" style="height: 128rpx; width: 128rpx; object-fit: cover; border-radius: 50%;"></image>
