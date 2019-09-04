@@ -65,7 +65,6 @@ Page({
         env: 'release-f8415a',
       },
     })
-
     return result.openid
   },
 

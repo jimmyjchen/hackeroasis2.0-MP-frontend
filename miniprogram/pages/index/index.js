@@ -11,6 +11,7 @@ Page({
   },
 
   onLoad: function() {
+    
     if (!wx.cloud) {
       wx.redirectTo({
         url: '../chooseLib/chooseLib',
@@ -52,10 +53,40 @@ Page({
       name: 'login',
       data: {},
       success: res => {
-        console.log('[云函数] [login] user openid: ', res.result.openid)
-        app.globalData.openid = res.result.openid
+        console.log('[云函数] [login] user openid: ', res.result.userInfo.openId)
+        app.globalData.openid = res.result.userInfo.openId
         wx.navigateTo({
           url: '../userConsole/userConsole',
+        })
+
+        wx.getSetting({
+          success: res => {
+            if (res.authSetting['scope.userInfo']) {
+              // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
+              wx.getUserInfo({
+                success: res => {
+                  this.setData({
+                    avatarUrl: res.userInfo.avatarUrl,
+                    userInfo: res.userInfo
+                  })
+                  wx.request({
+                    url: "http://localhost:3000/api/v1/users",
+                    method: 'POST',
+                    data: {
+                      username: data.userInfo.nickName,
+                      open_id: app.globalData.openid,
+                      avatar: data.userInfo.avatarUrl
+                    },
+                    success() {
+                      wx.reLaunch({
+                        url: '../../pages/index'
+                      })
+                    }
+                  })
+                }
+              })
+            }
+          }
         })
       },
       fail: err => {
